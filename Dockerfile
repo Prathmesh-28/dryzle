@@ -10,6 +10,7 @@ RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.json ./
 COPY shared/package.json ./shared/
 COPY backend/package.json ./backend/
+COPY backend/prisma ./backend/prisma
 
 RUN pnpm install --frozen-lockfile
 
