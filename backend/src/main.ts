@@ -8,8 +8,10 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
 
+  const corsOrigin = process.env.CORS_ORIGIN;
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:3000'],
+    // '*' or unset → reflect any origin (works with credentials); else CSV allowlist
+    origin: !corsOrigin || corsOrigin === '*' ? true : corsOrigin.split(','),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
