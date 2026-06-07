@@ -8,7 +8,26 @@
       "Bash(npm i *)",
       "Bash(vercel whoami *)",
       "Bash(git init *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(gh repo *)",
+      "Bash(vercel --yes --name dryzle-admin)",
+      "Read(//Users/prathmeshwalimbe/.local/share/com.vercel.cli/**)",
+      "Read(//Users/prathmeshwalimbe/.config/vercel/**)",
+      "Read(//Users/prathmeshwalimbe/**)",
+      "Bash(curl -s -X POST https://api.vercel.com/v9/projects?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY' -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s https://api.vercel.com/v9/projects/dryzle-admin?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY')",
+      "Bash(curl -s -X PATCH https://api.vercel.com/v9/projects/dryzle-admin?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY' -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -X POST https://api.vercel.com/v9/projects/dryzle-admin/link?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY' -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -X POST https://api.vercel.com/v9/projects/dryzle-admin/env?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY' -H 'Content-Type: application/json' -d '[ *)",
+      "Bash(curl -s -X POST https://api.vercel.com/v9/projects/dryzle-admin/env?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY' -H 'Content-Type: application/json' -d '{\"key\": \"NEXT_PUBLIC_API_URL\", \"value\": \"https://dryzle-api.onrender.com\", \"type\": \"plain\", \"target\": [\"production\", \"preview\"]}')",
+      "Bash(curl -s -X POST https://api.vercel.com/v13/deployments?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY' -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s 'https://api.vercel.com/v9/projects/dryzle-admin/deployments?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=3' -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY')",
+      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_j8dQ7z8xVumJtKspVMLYNNHLY1vA&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=3' -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY')",
+      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_j8dQ7z8xVumJtKspVMLYNNHLY1vA&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=1' -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY')",
+      "Bash(git push *)",
+      "Bash(pnpm install *)",
+      "Bash(env)",
+      "Bash(railway whoami *)"
     ],
     "additionalDirectories": [
       "/Users/prathmeshwalimbe/Downloads/Dryzle/shared/src"

@@ -18,188 +18,11 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
-  apps/admin:
+  apps/web:
     dependencies:
       '@dryzle/shared':
         specifier: workspace:*
         version: link:../../shared
-      axios:
-        specifier: ^1.6.8
-        version: 1.17.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
-      lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
-      next:
-        specifier: ^14.2.0
-        version: 14.2.35(@opentelemetry/api@1.9.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react:
-        specifier: ^18.3.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.0
-        version: 18.3.1(react@18.3.1)
-      recharts:
-        specifier: ^2.12.0
-        version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.1
-    devDependencies:
-      '@types/node':
-        specifier: ^20.12.0
-        version: 20.19.42
-      '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.31
-      '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.31)
-      autoprefixer:
-        specifier: ^10.4.19
-        version: 10.5.0(postcss@8.5.15)
-      postcss:
-        specifier: ^8.4.38
-        version: 8.5.15
-      tailwindcss:
-        specifier: ^3.4.3
-        version: 3.4.19
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
-
-  apps/customer:
-    dependencies:
-      '@dryzle/shared':
-        specifier: workspace:*
-        version: link:../../shared
-      axios:
-        specifier: ^1.6.8
-        version: 1.17.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
-      lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
-      next:
-        specifier: ^14.2.0
-        version: 14.2.35(@opentelemetry/api@1.9.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react:
-        specifier: ^18.3.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.0
-        version: 18.3.1(react@18.3.1)
-      socket.io-client:
-        specifier: ^4.7.5
-        version: 4.8.3
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.1
-    devDependencies:
-      '@types/node':
-        specifier: ^20.12.0
-        version: 20.19.42
-      '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.31
-      '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.31)
-      autoprefixer:
-        specifier: ^10.4.19
-        version: 10.5.0(postcss@8.5.15)
-      postcss:
-        specifier: ^8.4.38
-        version: 8.5.15
-      tailwindcss:
-        specifier: ^3.4.3
-        version: 3.4.19
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
-
-  apps/delivery:
-    dependencies:
-      '@dryzle/shared':
-        specifier: workspace:*
-        version: link:../../shared
-      axios:
-        specifier: ^1.6.8
-        version: 1.17.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
-      lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
-      next:
-        specifier: ^14.2.0
-        version: 14.2.35(@opentelemetry/api@1.9.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react:
-        specifier: ^18.3.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.0
-        version: 18.3.1(react@18.3.1)
-      socket.io-client:
-        specifier: ^4.7.5
-        version: 4.8.3
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.1
-    devDependencies:
-      '@types/node':
-        specifier: ^20.12.0
-        version: 20.19.42
-      '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.31
-      '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.31)
-      autoprefixer:
-        specifier: ^10.4.19
-        version: 10.5.0(postcss@8.5.15)
-      postcss:
-        specifier: ^8.4.38
-        version: 8.5.15
-      tailwindcss:
-        specifier: ^3.4.3
-        version: 3.4.19
-      typescript:
-        specifier: ^5.5.0
-        version: 5.9.3
-
-  apps/vendor:
-    dependencies:
-      '@dryzle/shared':
-        specifier: workspace:*
-        version: link:../../shared
-      axios:
-        specifier: ^1.6.8
-        version: 1.17.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
-      lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
       next:
         specifier: ^14.2.0
         version: 14.2.35(@opentelemetry/api@1.9.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -215,9 +38,6 @@ importers:
       socket.io-client:
         specifier: ^4.7.5
         version: 4.8.3
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.1
     devDependencies:
       '@types/node':
         specifier: ^20.12.0
@@ -1431,9 +1251,6 @@ packages:
     resolution: {integrity: sha512-ndfJ/JxxMd3nw31uyKoY2naivF+r29V+Lc0svZxe1JvvIRmi8hUsrMvdOwgS1o6uBHmiz91geQ0ylPP0aj1VUA==}
     engines: {node: '>=12'}
 
-  date-fns@3.6.0:
-    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
-
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -2124,11 +1941,6 @@ packages:
 
   lru-memoizer@2.3.0:
     resolution: {integrity: sha512-GXn7gyHAMhO13WSKrIiNfztwxodVsP8IoZ3XfrJV4yH2x0/OeTO/FIaAHTY5YekdGgW94njfuKmyyt1E0mR6Ug==}
-
-  lucide-react@0.378.0:
-    resolution: {integrity: sha512-u6EPU8juLUk9ytRcyapkWI18epAv3RU+6+TC23ivjR0e+glWKBobFeSgRwOIJihzktILQuy6E0E80P2jVTDR5g==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
 
   magic-string@0.30.8:
     resolution: {integrity: sha512-ISQTe55T2ao7XtlAStud6qwYPZjE4GK1S/BeVPus4jrq6JuOnQ00YKQC581RWhR122W7msZV263KzVeLoqidyQ==}
@@ -2853,9 +2665,6 @@ packages:
   symbol-observable@4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
     engines: {node: '>=0.10'}
-
-  tailwind-merge@2.6.1:
-    resolution: {integrity: sha512-Oo6tHdpZsGpkKG88HJ8RR1rg/RdnEkQEfMoEk2x1XRI3F1AxeU+ijRXpiVUF4UbLfcxxRGw6TbUINKYdWVsQTQ==}
 
   tailwindcss@3.4.19:
     resolution: {integrity: sha512-3ofp+LL8E+pK/JuPLPggVAIaEuhvIz4qNcf3nA1Xn2o/7fb7s/TYpHhwGDv1ZU3PkBluUVaF8PyCHcm48cKLWQ==}
@@ -4406,8 +4215,6 @@ snapshots:
 
   d3-timer@3.0.1: {}
 
-  date-fns@3.6.0: {}
-
   debug@2.6.9:
     dependencies:
       ms: 2.0.0
@@ -5246,10 +5053,6 @@ snapshots:
       lodash.clonedeep: 4.5.0
       lru-cache: 6.0.0
 
-  lucide-react@0.378.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-
   magic-string@0.30.8:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -5991,8 +5794,6 @@ snapshots:
   swagger-ui-dist@5.17.14: {}
 
   symbol-observable@4.0.0: {}
-
-  tailwind-merge@2.6.1: {}
 
   tailwindcss@3.4.19:
     dependencies:
