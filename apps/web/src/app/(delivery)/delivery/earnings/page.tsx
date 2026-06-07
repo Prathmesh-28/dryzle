@@ -1,32 +1,42 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+"use client";
 
-interface Earnings { today: number; week: number; month: number; totalDeliveries: number }
+import { useEffect, useState } from "react";
+import { apiGet } from "@/lib/api";
+import { inr } from "@/lib/format";
 
-export default function DeliveryEarnings() {
-  const [data, setData] = useState<Earnings | null>(null);
+interface E {
+  today?: number;
+  week?: number;
+  month?: number;
+  totalDeliveries?: number;
+}
 
-  useEffect(() => { api.get<Earnings>('/delivery/earnings').then(setData).catch(() => {}); }, []);
+function Card({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-card border shadow-sm p-5">
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        {label}
+      </p>
+      <p className="text-3xl font-extrabold mt-2">{value}</p>
+    </div>
+  );
+}
 
-  const cards = [
-    { label: 'Today', value: data ? `₹${data.today}` : '–' },
-    { label: 'This Week', value: data ? `₹${data.week}` : '–' },
-    { label: 'This Month', value: data ? `₹${data.month}` : '–' },
-    { label: 'Total Deliveries', value: data?.totalDeliveries ?? '–' },
-  ];
+export default function Earnings() {
+  const [e, setE] = useState<E | null>(null);
+  useEffect(() => {
+    apiGet<E>("/delivery/earnings").then(setE).catch(() => setE({}));
+  }, []);
 
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4">Earnings</h2>
+    <div className="max-w-md mx-auto p-4">
+      <h2 className="text-lg font-semibold mb-3">Your earnings</h2>
       <div className="grid grid-cols-2 gap-3">
-        {cards.map((c) => (
-          <div key={c.label} className="bg-white rounded-xl p-4 shadow-sm">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">{c.label}</p>
-            <p className="text-2xl font-bold mt-1">{c.value}</p>
-          </div>
-        ))}
+        <Card label="Today" value={inr(e?.today ?? 0)} />
+        <Card label="This Week" value={inr(e?.week ?? 0)} />
+        <Card label="This Month" value={inr(e?.month ?? 0)} />
+        <Card label="Total Deliveries" value={String(e?.totalDeliveries ?? 0)} />
       </div>
-    </>
+    </div>
   );
 }

@@ -36,10 +36,20 @@
       "Bash(curl -s -X POST https://api.vercel.com/v13/deployments?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw' -H 'Content-Type: application/json' --data-raw '{\"name\":\"dryzle-web\",\"project\":\"dryzle-web\",\"gitSource\":{\"type\":\"github\",\"repoId\":\"1261738150\",\"ref\":\"main\",\"sha\":\"__CMDSUB_OUTPUT__\"},\"target\":\"production\"}')",
       "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=1' -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw')",
       "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=3' -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw')",
-      "Bash(curl -s 'https://api.vercel.com/v2/deployments/dpl_2z3H2UKVAY1Prh8DTr2HwZkzg7he/events?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=200' -H 'Authorization: Bearer vca_1c3dj7ch0EzQKvaNm8fno72zouCkgAhqffOhOWAx0th5u4WMm93IBufU')"
+      "Bash(curl -s 'https://api.vercel.com/v2/deployments/dpl_2z3H2UKVAY1Prh8DTr2HwZkzg7he/events?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=200' -H 'Authorization: Bearer vca_1c3dj7ch0EzQKvaNm8fno72zouCkgAhqffOhOWAx0th5u4WMm93IBufU')",
+      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=2' -H 'Authorization: Bearer vca_7PynsMSECfLeHOSJQSJQRuEmeDLvSx463sQztH4JnNAmWIrjSD4PVc24')",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=1' -H 'Authorization: Bearer vca_7PynsMSECfLeHOSJQSJQRuEmeDLvSx463sQztH4JnNAmWIrjSD4PVc24')",
+      "Bash(curl -s https://api.vercel.com/v9/projects/dryzle-web?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_7PynsMSECfLeHOSJQSJQRuEmeDLvSx463sQztH4JnNAmWIrjSD4PVc24')",
+      "Bash(curl -s \"https://dryzle-web.vercel.app\" -I)",
+      "Bash(cp \"/Users/prathmeshwalimbe/Downloads/Laundry Express/src/components/ui/accordion.tsx\" /tmp/ui_accordion.tsx && ls \"/Users/prathmeshwalimbe/Downloads/Laundry Express/src/components/ui/\")",
+      "Bash(mkdir -p \"/Users/prathmeshwalimbe/Downloads/Dryzle/apps/web/src/components/ui\" \"/Users/prathmeshwalimbe/Downloads/Dryzle/apps/web/src/hooks\" *)",
+      "Bash(pnpm --filter @dryzle/web build)"
     ],
     "additionalDirectories": [
-      "/Users/prathmeshwalimbe/Downloads/Dryzle/shared/src"
+      "/Users/prathmeshwalimbe/Downloads/Dryzle/shared/src",
+      "/tmp",
+      "/Users/prathmeshwalimbe/Downloads/Laundry Express/src/components/ui"
     ]
   }
 }

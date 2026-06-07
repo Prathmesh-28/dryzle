@@ -1,50 +1,81 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import Link from 'next/link';
+"use client";
 
-interface Order { id: string; status: string; totalAmount: number; createdAt: string }
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Loader2, Receipt } from "lucide-react";
+import { apiGet } from "@/lib/api";
+import { StatusBadge } from "@/components/status-badge";
+import { inr, fmtDateTime } from "@/lib/format";
 
-const STATUS_COLOR: Record<string, string> = {
-  PLACED: 'bg-yellow-100 text-yellow-700',
-  ACCEPTED: 'bg-blue-100 text-blue-700',
-  PICKED_UP: 'bg-blue-100 text-blue-700',
-  IN_PROGRESS: 'bg-purple-100 text-purple-700',
-  READY: 'bg-green-100 text-green-700',
-  OUT_FOR_DELIVERY: 'bg-orange-100 text-orange-700',
-  DELIVERED: 'bg-green-100 text-green-700',
-  CANCELLED: 'bg-red-100 text-red-700',
-};
+interface Order {
+  id: string;
+  orderNumber?: string;
+  number?: string;
+  vendor?: { shopName?: string; name?: string };
+  vendorName?: string;
+  status: string;
+  amount?: number;
+  totalAmount?: number;
+  createdAt?: string;
+}
 
-export default function CustomerOrders() {
-  const [orders, setOrders] = useState<Order[]>([]);
+export default function OrdersList() {
+  const [orders, setOrders] = useState<Order[] | null>(null);
 
-  useEffect(() => { api.get<Order[]>('/orders/my').then(setOrders); }, []);
+  useEffect(() => {
+    apiGet<Order[] | { orders: Order[] }>("/orders/my")
+      .then((d) => setOrders(Array.isArray(d) ? d : d.orders))
+      .catch(() => setOrders([]));
+  }, []);
 
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4">My Orders</h2>
-      {orders.length === 0 ? (
-        <p className="text-gray-400 text-center py-12">No orders yet.</p>
-      ) : (
-        <div className="space-y-3">
-          {orders.map((o) => (
-            <Link key={o.id} href={`/customer/orders/${o.id}`}
-              className="block bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">#{o.id.slice(-6).toUpperCase()}</span>
-                <span className={`text-xs px-2 py-1 rounded-full ${STATUS_COLOR[o.status] ?? 'bg-gray-100'}`}>
-                  {o.status.replace(/_/g, ' ')}
-                </span>
+    <div className="max-w-md mx-auto">
+      <header className="bg-gradient-to-b from-indigo-600 to-indigo-500 text-white px-4 pt-6 pb-5 rounded-b-3xl">
+        <h1 className="text-2xl font-extrabold">Your Orders</h1>
+        <p className="text-sm text-white/80 mt-1">Track and revisit past orders</p>
+      </header>
+
+      <main className="px-4 pt-5 space-y-3">
+        {!orders ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-20 h-20 mx-auto rounded-full bg-indigo-50 grid place-items-center mb-4">
+              <Receipt className="w-10 h-10 text-primary" />
+            </div>
+            <h3 className="font-semibold">No orders yet</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Place your first order from a nearby laundry
+            </p>
+          </div>
+        ) : (
+          orders.map((o) => (
+            <Link
+              key={o.id}
+              href={`/customer/orders/${o.id}`}
+              className="block rounded-2xl bg-card p-4 shadow-sm hover:shadow-md transition"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">
+                    #{o.orderNumber || o.number || o.id.slice(-6).toUpperCase()}
+                  </p>
+                  <p className="font-semibold truncate mt-0.5">
+                    {o.vendor?.shopName || o.vendor?.name || o.vendorName || "Laundry"}
+                  </p>
+                </div>
+                <StatusBadge status={o.status} />
               </div>
-              <div className="mt-1 flex justify-between">
-                <span className="font-semibold">₹{o.totalAmount}</span>
-                <span className="text-xs text-gray-400">{new Date(o.createdAt).toLocaleDateString()}</span>
+              <div className="flex items-center justify-between mt-3 text-sm">
+                <span className="text-muted-foreground">{fmtDateTime(o.createdAt)}</span>
+                <span className="font-semibold">{inr(o.amount ?? o.totalAmount)}</span>
               </div>
             </Link>
-          ))}
-        </div>
-      )}
-    </>
+          ))
+        )}
+      </main>
+    </div>
   );
 }

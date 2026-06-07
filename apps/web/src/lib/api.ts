@@ -1,26 +1,40 @@
-import { getToken } from './auth';
+import axios from "axios";
+import { getToken, clearAuth } from "./auth";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+export const API_BASE = "https://dryzle-api.onrender.com/api/v1";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+export const api = axios.create({
+  baseURL: API_BASE,
+  timeout: 30000,
+});
+
+api.interceptors.request.use((config) => {
   const token = getToken();
-  const res = await fetch(`${BASE}/api/v1${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...init?.headers,
-    },
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-}
+  if (token) {
+    config.headers = config.headers ?? {};
+    (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-export const api = {
-  get: <T>(path: string) => request<T>(path),
-  post: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-  patch: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
-};
+api.interceptors.response.use(
+  (r) => r,
+  (err) => {
+    if (err?.response?.status === 401 && typeof window !== "undefined") {
+      clearAuth();
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(err);
+  },
+);
+
+export const apiGet = <T = unknown>(path: string, params?: Record<string, unknown>) =>
+  api.get<T>(path, { params }).then((r) => r.data);
+export const apiPost = <T = unknown>(path: string, body?: unknown) =>
+  api.post<T>(path, body).then((r) => r.data);
+export const apiPatch = <T = unknown>(path: string, body?: unknown) =>
+  api.patch<T>(path, body).then((r) => r.data);
+export const apiDelete = <T = unknown>(path: string) =>
+  api.delete<T>(path).then((r) => r.data);

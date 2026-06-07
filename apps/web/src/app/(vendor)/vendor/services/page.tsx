@@ -1,48 +1,149 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+"use client";
 
-interface Service { id: string; name: string; pricePerUnit: number; unit: string }
+import { useEffect, useState } from "react";
+import { Loader2, Trash2, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { apiGet, apiPost, apiDelete } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { inr } from "@/lib/format";
+
+interface Service {
+  id: string;
+  name: string;
+  price: number;
+  unit: string;
+}
 
 export default function VendorServices() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [form, setForm] = useState({ name: '', pricePerUnit: '', unit: 'KG' });
+  const [list, setList] = useState<Service[] | null>(null);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [unit, setUnit] = useState("KG");
+  const [adding, setAdding] = useState(false);
 
-  useEffect(() => { api.get<Service[]>('/vendors/me/services').then(setServices).catch(() => {}); }, []);
+  const load = () => {
+    apiGet<Service[] | { services: Service[] }>("/vendors/me/services")
+      .then((d) => setList(Array.isArray(d) ? d : d.services))
+      .catch(() => setList([]));
+  };
+  useEffect(() => { load(); }, []);
 
-  async function addService(e: React.FormEvent) {
-    e.preventDefault();
-    const s = await api.post<Service>('/vendors/me/services', {
-      ...form, pricePerUnit: Number(form.pricePerUnit),
-    });
-    setServices((prev) => [...prev, s]);
-    setForm({ name: '', pricePerUnit: '', unit: 'KG' });
-  }
+  const add = async () => {
+    if (!name.trim() || !price) {
+      toast.error("Enter service name and price");
+      return;
+    }
+    setAdding(true);
+    try {
+      await apiPost("/vendors/me/services", {
+        name: name.trim(),
+        price: Number(price),
+        unit,
+      });
+      toast.success("Service added");
+      setName("");
+      setPrice("");
+      load();
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || "Failed");
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const remove = async (id: string) => {
+    const prev = list;
+    setList((l) => l?.filter((s) => s.id !== id) ?? null);
+    try {
+      await apiDelete(`/vendors/me/services/${id}`);
+      toast.success("Removed");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } } };
+      setList(prev);
+      toast.error(err?.response?.data?.message || "Failed");
+    }
+  };
 
   return (
-    <>
-      <h2 className="text-2xl font-bold mb-6">Services</h2>
-      <form onSubmit={addService} className="bg-white rounded-xl p-4 shadow-sm mb-6 flex gap-3 flex-wrap max-w-2xl">
-        <input required placeholder="Service name" value={form.name}
-          onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm flex-1 min-w-32" />
-        <input required type="number" placeholder="Price" value={form.pricePerUnit}
-          onChange={(e) => setForm((p) => ({ ...p, pricePerUnit: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm w-28" />
-        <select value={form.unit} onChange={(e) => setForm((p) => ({ ...p, unit: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm">
-          <option>KG</option><option>PIECE</option><option>PAIR</option>
-        </select>
-        <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Add</button>
-      </form>
-      <div className="space-y-2 max-w-2xl">
-        {services.map((s) => (
-          <div key={s.id} className="bg-white rounded-xl px-4 py-3 shadow-sm flex justify-between">
-            <span className="font-medium">{s.name}</span>
-            <span className="text-gray-500 text-sm">₹{s.pricePerUnit} / {s.unit}</span>
-          </div>
-        ))}
+    <div>
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold">Services</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Manage what you offer and your prices
+        </p>
+      </header>
+
+      <div className="rounded-2xl bg-card border shadow-sm p-5 mb-6 max-w-3xl">
+        <h2 className="font-semibold mb-4">Add new service</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_120px_140px_auto] gap-3">
+          <Input
+            placeholder="Service name (e.g. Wash & Fold)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            type="number"
+            min={0}
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+          <Select value={unit} onValueChange={setUnit}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="KG">per KG</SelectItem>
+              <SelectItem value="PIECE">per Piece</SelectItem>
+              <SelectItem value="PAIR">per Pair</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button onClick={add} disabled={adding} className="gap-2">
+            {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            Add
+          </Button>
+        </div>
       </div>
-    </>
+
+      <div className="rounded-2xl bg-card border shadow-sm overflow-hidden max-w-3xl">
+        {!list ? (
+          <div className="p-12 text-center">
+            <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
+          </div>
+        ) : list.length === 0 ? (
+          <div className="p-12 text-center text-muted-foreground text-sm">
+            No services yet
+          </div>
+        ) : (
+          <ul className="divide-y">
+            {list.map((s) => (
+              <li key={s.id} className="flex items-center justify-between px-5 py-4">
+                <div>
+                  <p className="font-medium">{s.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {inr(s.price)} / {s.unit?.toLowerCase()}
+                  </p>
+                </div>
+                <button
+                  onClick={() => remove(s.id)}
+                  className="w-9 h-9 grid place-items-center rounded-lg text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }

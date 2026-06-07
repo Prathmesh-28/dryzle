@@ -1,48 +1,91 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+"use client";
 
-interface Analytics {
-  retention: { label: string; rate: number }[];
-  serviceBreakdown: { name: string; value: number }[];
+import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
+import { apiGet } from "@/lib/api";
+
+interface A {
+  retention?: Array<{ label: string; rate: number }>;
+  serviceBreakdown?: Array<{ name: string; value: number }>;
 }
 
-const COLORS = ['#6366f1','#8b5cf6','#a78bfa','#c4b5fd','#ddd6fe'];
+const COLORS = ["#4F46E5", "#0EA5E9", "#F59E0B", "#10B981", "#EC4899", "#8B5CF6"];
 
 export default function AdminAnalytics() {
-  const [data, setData] = useState<Analytics | null>(null);
-
-  useEffect(() => { api.get<Analytics>('/admin/analytics').then(setData).catch(() => {}); }, []);
+  const [a, setA] = useState<A | null>(null);
+  useEffect(() => {
+    apiGet<A>("/admin/analytics").then(setA).catch(() => setA({}));
+  }, []);
 
   return (
-    <>
-      <h2 className="text-2xl font-bold mb-6">Analytics</h2>
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="font-semibold mb-4">User Retention</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={data?.retention ?? []}>
-              <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} domain={[0, 100]} unit="%" />
-              <Tooltip formatter={(v) => [`${v}%`, 'Retention']} />
-              <Line type="monotone" dataKey="rate" stroke="#6366f1" strokeWidth={2} dot />
-            </LineChart>
-          </ResponsiveContainer>
+    <div>
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold">Analytics</h1>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="rounded-2xl bg-card border shadow-sm p-5">
+          <h2 className="font-semibold mb-4">User Retention</h2>
+          <div style={{ width: "100%", height: 320 }}>
+            <ResponsiveContainer>
+              <LineChart data={a?.retention ?? []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 0% / 0.06)" />
+                <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} unit="%" />
+                <Tooltip
+                  formatter={(v: number) => `${v}%`}
+                  contentStyle={{ borderRadius: 12, border: "1px solid hsl(0 0% 0% / 0.08)" }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="rate"
+                  stroke="#4F46E5"
+                  strokeWidth={3}
+                  dot={{ r: 5, fill: "#4F46E5" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="font-semibold mb-4">Service Breakdown</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={data?.serviceBreakdown ?? []} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
-                {(data?.serviceBreakdown ?? []).map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-              </Pie>
-              <Legend />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+
+        <div className="rounded-2xl bg-card border shadow-sm p-5">
+          <h2 className="font-semibold mb-4">Service Breakdown</h2>
+          <div style={{ width: "100%", height: 320 }}>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={a?.serviceBreakdown ?? []}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={60}
+                  outerRadius={110}
+                  paddingAngle={2}
+                >
+                  {(a?.serviceBreakdown ?? []).map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ borderRadius: 12, border: "1px solid hsl(0 0% 0% / 0.08)" }}
+                />
+                <Legend verticalAlign="bottom" height={36} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

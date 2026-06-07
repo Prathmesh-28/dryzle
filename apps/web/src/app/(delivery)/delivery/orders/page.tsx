@@ -1,69 +1,179 @@
-'use client';
-import { useEffect, useState, useRef } from 'react';
-import { api } from '@/lib/api';
-import { startLocationSharing } from '@/lib/socket';
+"use client";
 
-interface Order { id: string; status: string; totalAmount: number; vendor: { shopName: string }; customer: { name: string } }
+import { useEffect, useRef, useState } from "react";
+import { Loader2, Bike, MapPin } from "lucide-react";
+import { toast } from "sonner";
+import { apiGet, apiPatch } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/status-badge";
+import { inr } from "@/lib/format";
+import { getSocket } from "@/lib/socket";
+
+interface Order {
+  id: string;
+  orderNumber?: string;
+  vendor?: { shopName?: string; name?: string; address?: string };
+  customer?: { name?: string; phone?: string; address?: string };
+  amount?: number;
+  totalAmount?: number;
+  status: string;
+}
 
 export default function DeliveryOrders() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [available, setAvailable] = useState(true);
-  const stopRef = useRef<(() => void) | null>(null);
+  const [orders, setOrders] = useState<Order[] | null>(null);
+  const watchers = useRef<Record<string, number>>({});
 
-  useEffect(() => { api.get<Order[]>('/delivery/my-orders').then(setOrders).catch(() => {}); }, []);
+  const load = () => {
+    apiGet<Order[] | { orders: Order[] }>("/delivery/my-orders")
+      .then((d) => setOrders(Array.isArray(d) ? d : d.orders))
+      .catch(() => setOrders([]));
+  };
+  useEffect(load, []);
 
-  async function toggleAvailability() {
-    await api.patch('/delivery/availability', { isAvailable: !available });
-    setAvailable(!available);
-  }
+  const startTracking = (orderId: string) => {
+    if (!navigator.geolocation || watchers.current[orderId]) return;
+    const socket = getSocket();
+    const id = navigator.geolocation.watchPosition(
+      (pos) => {
+        socket.emit("location:update", {
+          orderId,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 5000 },
+    );
+    watchers.current[orderId] = id;
+  };
 
-  async function startDelivery(orderId: string) {
-    await api.patch(`/orders/${orderId}/status`, { status: 'OUT_FOR_DELIVERY' });
-    setOrders((prev) => prev.map((o) => o.id === orderId ? { ...o, status: 'OUT_FOR_DELIVERY' } : o));
-    stopRef.current = startLocationSharing(orderId);
-  }
+  const stopTracking = (orderId: string) => {
+    const id = watchers.current[orderId];
+    if (id != null) {
+      navigator.geolocation?.clearWatch(id);
+      delete watchers.current[orderId];
+    }
+  };
 
-  async function markDelivered(orderId: string) {
-    await api.patch(`/orders/${orderId}/status`, { status: 'DELIVERED' });
-    stopRef.current?.();
-    setOrders((prev) => prev.filter((o) => o.id !== orderId));
-  }
+  useEffect(() => {
+    return () => {
+      Object.values(watchers.current).forEach((id) =>
+        navigator.geolocation?.clearWatch(id),
+      );
+    };
+  }, []);
+
+  const startDelivery = async (o: Order) => {
+    const prev = o.status;
+    setOrders((l) =>
+      l ? l.map((x) => (x.id === o.id ? { ...x, status: "OUT_FOR_DELIVERY" } : x)) : l,
+    );
+    try {
+      await apiPatch(`/orders/${o.id}/status`, { status: "OUT_FOR_DELIVERY" });
+      startTracking(o.id);
+      toast.success("Delivery started — sharing location");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } } };
+      setOrders((l) =>
+        l ? l.map((x) => (x.id === o.id ? { ...x, status: prev } : x)) : l,
+      );
+      toast.error(err?.response?.data?.message || "Failed");
+    }
+  };
+
+  const markDelivered = async (o: Order) => {
+    const prev = o.status;
+    setOrders((l) =>
+      l ? l.map((x) => (x.id === o.id ? { ...x, status: "DELIVERED" } : x)) : l,
+    );
+    try {
+      await apiPatch(`/orders/${o.id}/status`, { status: "DELIVERED" });
+      stopTracking(o.id);
+      toast.success("Marked delivered");
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } } };
+      setOrders((l) =>
+        l ? l.map((x) => (x.id === o.id ? { ...x, status: prev } : x)) : l,
+      );
+      toast.error(err?.response?.data?.message || "Failed");
+    }
+  };
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">My Orders</h2>
-        <button onClick={toggleAvailability}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium ${available ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-          {available ? 'Available' : 'Offline'}
-        </button>
-      </div>
-      <div className="space-y-3">
-        {orders.map((o) => (
-          <div key={o.id} className="bg-white rounded-xl p-4 shadow-sm">
-            <p className="font-semibold">{o.vendor.shopName}</p>
-            <p className="text-sm text-gray-500">For {o.customer.name} · ₹{o.totalAmount}</p>
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full mt-1 inline-block">
-              {o.status.replace(/_/g, ' ')}
-            </span>
-            <div className="mt-3 flex gap-2">
-              {o.status === 'READY' && (
-                <button onClick={() => startDelivery(o.id)}
-                  className="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm">
-                  Start Delivery
-                </button>
-              )}
-              {o.status === 'OUT_FOR_DELIVERY' && (
-                <button onClick={() => markDelivered(o.id)}
-                  className="bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm">
-                  Mark Delivered
-                </button>
-              )}
-            </div>
+    <div className="max-w-md mx-auto p-4">
+      <h2 className="text-lg font-semibold mb-3">Assigned orders</h2>
+
+      {!orders ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-16">
+          <div className="w-20 h-20 mx-auto rounded-full bg-indigo-50 grid place-items-center mb-4">
+            <Bike className="w-10 h-10 text-primary" />
           </div>
-        ))}
-        {orders.length === 0 && <p className="text-gray-400 text-center py-12">No assigned orders.</p>}
-      </div>
-    </>
+          <h3 className="font-semibold">No deliveries</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Go online to start receiving orders
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {orders.map((o) => (
+            <div key={o.id} className="rounded-2xl bg-card p-4 shadow-sm border">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">
+                    #{o.orderNumber || o.id.slice(-6).toUpperCase()}
+                  </p>
+                  <p className="font-semibold truncate mt-0.5">
+                    {o.vendor?.shopName || o.vendor?.name || "Vendor"}
+                  </p>
+                  <p className="text-sm text-muted-foreground truncate">
+                    → {o.customer?.name || "Customer"}
+                  </p>
+                </div>
+                <StatusBadge status={o.status} />
+              </div>
+
+              {(o.vendor?.address || o.customer?.address) && (
+                <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                  {o.vendor?.address && (
+                    <p className="flex items-start gap-1">
+                      <MapPin className="w-3 h-3 mt-0.5 shrink-0" />
+                      <span>Pickup: {o.vendor.address}</span>
+                    </p>
+                  )}
+                  {o.customer?.address && (
+                    <p className="flex items-start gap-1">
+                      <MapPin className="w-3 h-3 mt-0.5 shrink-0" />
+                      <span>Drop: {o.customer.address}</span>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mt-4">
+                <span className="font-semibold">{inr(o.amount ?? o.totalAmount)}</span>
+                {o.status === "READY" && (
+                  <Button size="sm" onClick={() => startDelivery(o)}>
+                    Start Delivery
+                  </Button>
+                )}
+                {o.status === "OUT_FOR_DELIVERY" && (
+                  <Button
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700"
+                    onClick={() => markDelivered(o)}
+                  >
+                    Mark Delivered
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

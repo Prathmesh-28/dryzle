@@ -1,46 +1,63 @@
-'use client';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { clearAuth } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+"use client";
 
-export default function CustomerLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+import { type ReactNode } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Home, Receipt, LogOut } from "lucide-react";
+import { RoleGuard } from "@/components/role-guard";
+import { clearAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
+
+export default function CustomerLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
 
-  function logout() {
-    document.cookie = 'dryzle_token=;path=/;max-age=0';
+  const logout = () => {
     clearAuth();
-    router.push('/login');
-  }
+    router.push("/login");
+  };
 
-  const nav = [
-    { href: '/customer', label: 'Home' },
-    { href: '/customer/orders', label: 'Orders' },
-  ];
+  const isActive = (path: string) =>
+    path === "/customer" ? pathname === "/customer" : pathname.startsWith(path);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-bold text-indigo-600 text-lg">Dryzle</span>
-          <nav className="flex gap-4 text-sm">
-            {nav.map((n) => (
-              <Link
-                key={n.href}
-                href={n.href}
-                className={pathname === n.href ? 'text-indigo-600 font-semibold' : 'text-gray-600'}
-              >
-                {n.label}
-              </Link>
-            ))}
-            <button onClick={logout} className="text-gray-400 hover:text-red-500 text-sm">
+    <RoleGuard allow="CUSTOMER">
+      <div className="min-h-screen bg-background pb-20">
+        {children}
+        <nav className="fixed bottom-0 inset-x-0 bg-card border-t z-40">
+          <div className="max-w-md mx-auto grid grid-cols-3">
+            <Link
+              href="/customer"
+              className={cn(
+                "flex flex-col items-center gap-1 py-3 text-xs font-medium",
+                isActive("/customer") && !pathname.startsWith("/customer/orders")
+                  ? "text-primary"
+                  : "text-muted-foreground",
+              )}
+            >
+              <Home className="w-5 h-5" />
+              Home
+            </Link>
+            <Link
+              href="/customer/orders"
+              className={cn(
+                "flex flex-col items-center gap-1 py-3 text-xs font-medium",
+                isActive("/customer/orders") ? "text-primary" : "text-muted-foreground",
+              )}
+            >
+              <Receipt className="w-5 h-5" />
+              Orders
+            </Link>
+            <button
+              onClick={logout}
+              className="flex flex-col items-center gap-1 py-3 text-xs font-medium text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="w-5 h-5" />
               Logout
             </button>
-          </nav>
-        </div>
-      </header>
-      <main className="flex-1 max-w-lg mx-auto w-full px-4 py-4">{children}</main>
-    </div>
+          </div>
+        </nav>
+      </div>
+    </RoleGuard>
   );
 }
