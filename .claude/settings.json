@@ -44,7 +44,15 @@
       "Bash(curl -s \"https://dryzle-web.vercel.app\" -I)",
       "Bash(cp \"/Users/prathmeshwalimbe/Downloads/Laundry Express/src/components/ui/accordion.tsx\" /tmp/ui_accordion.tsx && ls \"/Users/prathmeshwalimbe/Downloads/Laundry Express/src/components/ui/\")",
       "Bash(mkdir -p \"/Users/prathmeshwalimbe/Downloads/Dryzle/apps/web/src/components/ui\" \"/Users/prathmeshwalimbe/Downloads/Dryzle/apps/web/src/hooks\" *)",
-      "Bash(pnpm --filter @dryzle/web build)"
+      "Bash(pnpm --filter @dryzle/web build)",
+      "Bash(cat /Users/prathmeshwalimbe/Downloads/Dryzle/apps/web/vercel.json)",
+      "Bash(echo \"no vercel.json\")",
+      "Bash(echo \"---\")",
+      "Bash(curl -s 'https://api.vercel.com/v9/projects?teamId=__TRACKED_VAR__&limit=20' -H 'Authorization: Bearer __TRACKED_VAR__')",
+      "Bash(curl -s 'https://api.vercel.com/v9/projects?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=20' -H 'Authorization: Bearer vca_2iwBU6V2sbabQX7roSMlHQ2Dvwh6C34YuJTOXMbBYzlKH1yuu11QMLWY')",
+      "Bash(curl -s -X POST https://api.vercel.com/v9/projects?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_7PynsMSECfLeHOSJQSJQRuEmeDLvSx463sQztH4JnNAmWIrjSD4PVc24' -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s https://api.vercel.com/v9/projects/dryzle-web?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_19FA2SJvwvwgG68Gx1tTrcopqgZKohWlM0V2VsfookdrOW2D4b0Llzse')",
+      "Read(//temp/readonly/**)"
     ],
     "additionalDirectories": [
       "/Users/prathmeshwalimbe/Downloads/Dryzle/shared/src",
