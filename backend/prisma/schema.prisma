@@ -1,0 +1,333 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  VENDOR
+  DELIVERY_BOY
+  ADMIN
+}
+
+enum OrderStatus {
+  PLACED
+  ACCEPTED
+  PICKED_UP
+  AT_VENDOR
+  PROCESSING
+  READY
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  UPI
+  CARD
+  WALLET
+  COD
+}
+
+enum UnitType {
+  KG
+  PIECE
+}
+
+enum VehicleType {
+  BIKE
+  SCOOTER
+  CYCLE
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FLAT
+}
+
+enum NotificationType {
+  ORDER
+  DELIVERY
+  PROMO
+  SYSTEM
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  email     String?  @unique
+  role      Role     @default(CUSTOMER)
+  fcmToken  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendor       Vendor?
+  deliveryBoy  DeliveryBoy?
+  orders       Order[]        @relation("CustomerOrders")
+  addresses    Address[]
+  reviews      Review[]       @relation("CustomerReviews")
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Vendor {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopName        String
+  address         String
+  geoLat          Float
+  geoLng          Float
+  rating          Float    @default(0)
+  reviewCount     Int      @default(0)
+  isOpen          Boolean  @default(false)
+  serviceRadiusKm Float    @default(5)
+  workingHours    Json?
+  photos          String[]
+  bankUpi         String?
+  commissionRate  Float?
+  isApproved      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  maxDailyOrders  Int      @default(50)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  services     Service[]
+  orders       Order[]
+  deliveryBoys DeliveryBoy[]
+  reviews      Review[]      @relation("VendorReviews")
+  zones        ZoneVendor[]
+
+  @@map("vendors")
+}
+
+model DeliveryBoy {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorId    String
+  vendor      Vendor      @relation(fields: [vendorId], references: [id])
+  isAvailable Boolean     @default(false)
+  currentLat  Float?
+  currentLng  Float?
+  vehicleType VehicleType @default(BIKE)
+  isApproved  Boolean     @default(false)
+  idProofUrl  String?
+  totalEarnings Float     @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  orders Order[]
+
+  @@map("delivery_boys")
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  vendorId     String
+  vendor       Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  pricePerUnit Float
+  unitType     UnitType @default(KG)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orderItems OrderItem[]
+
+  @@map("services")
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  customerId    String
+  customer      User          @relation("CustomerOrders", fields: [customerId], references: [id])
+  vendorId      String
+  vendor        Vendor        @relation(fields: [vendorId], references: [id])
+  deliveryBoyId String?
+  deliveryBoy   DeliveryBoy?  @relation(fields: [deliveryBoyId], references: [id])
+  status        OrderStatus   @default(PLACED)
+  totalAmount   Float
+  paymentStatus PaymentStatus @default(PENDING)
+  pickupSlot    String
+  deliverySlot  String
+  notes         String?
+  promoCodeId   String?
+  promoCode     PromoCode?    @relation(fields: [promoCodeId], references: [id])
+  cancelReason  String?
+  platformFee   Float         @default(0)
+  vendorPayout  Float         @default(0)
+  dbPayout      Float         @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  items      OrderItem[]
+  statusLogs OrderStatusLog[]
+  payment    Payment?
+  review     Review?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+  quantity  Float
+  unitPrice Float
+  subtotal  Float
+
+  @@map("order_items")
+}
+
+model OrderStatusLog {
+  id            String      @id @default(cuid())
+  orderId       String
+  order         Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status        OrderStatus
+  timestamp     DateTime    @default(now())
+  updatedByRole Role
+  notes         String?
+
+  @@map("order_status_logs")
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String
+  fullAddress String
+  geoLat      Float
+  geoLng      Float
+  isDefault   Boolean @default(false)
+
+  @@map("addresses")
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  orderId        String        @unique
+  order          Order         @relation(fields: [orderId], references: [id])
+  gateway        String        @default("razorpay")
+  gatewayTxnId   String?
+  gatewayOrderId String?
+  amount         Float
+  status         PaymentStatus @default(PENDING)
+  method         PaymentMethod @default(COD)
+  refundId       String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  orderId    String   @unique
+  order      Order    @relation(fields: [orderId], references: [id])
+  customerId String
+  customer   User     @relation("CustomerReviews", fields: [customerId], references: [id])
+  vendorId   String
+  vendor     Vendor   @relation("VendorReviews", fields: [vendorId], references: [id])
+  rating     Int
+  comment    String?
+  isFlagged  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@map("reviews")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  type      NotificationType @default(ORDER)
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+model PromoCode {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  discountType  DiscountType @default(PERCENTAGE)
+  discountValue Float
+  minOrder      Float        @default(0)
+  maxUses       Int          @default(100)
+  usedCount     Int          @default(0)
+  expiresAt     DateTime?
+  isActive      Boolean      @default(true)
+  vendorId      String?
+  isFirstOrderOnly Boolean   @default(false)
+  createdAt     DateTime     @default(now())
+
+  orders Order[]
+
+  @@map("promo_codes")
+}
+
+model Zone {
+  id       String  @id @default(cuid())
+  name     String
+  polygon  Json
+  isActive Boolean @default(true)
+
+  vendors ZoneVendor[]
+
+  @@map("zones")
+}
+
+model ZoneVendor {
+  zoneId   String
+  zone     Zone   @relation(fields: [zoneId], references: [id])
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  @@id([zoneId, vendorId])
+  @@map("zone_vendors")
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("otp_codes")
+}
+
+model PlatformSettings {
+  id               String   @id @default("singleton")
+  commissionRate   Float    @default(0.18)
+  dbPayPerDelivery Float    @default(30)
+  maintenanceMode  Boolean  @default(false)
+  supportContact   String   @default("+91-9999999999")
+  platformName     String   @default("Dryzle")
+  otpProvider      String   @default("twilio")
+  updatedAt        DateTime @updatedAt
+
+  @@map("platform_settings")
+}
