@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Auth temporarily disabled — uncomment below to re-enable
+export function middleware(_req: NextRequest) {
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/((?!_next|favicon.ico|api).*)'],
+};
+
+/*
 const PUBLIC_PATHS = ['/', '/login'];
 
 const ROLE_HOME: Record<string, string> = {
@@ -35,18 +45,16 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get('dryzle_token')?.value;
 
   if (!token) {
-    return NextResponse.next();
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
   const role = decodeRole(token);
-  if (!role) return NextResponse.next();
+  if (!role) return NextResponse.redirect(new URL('/login', req.url));
 
-  // Logged-in user visiting root → go to their dashboard
   if (pathname === '/') {
     return NextResponse.redirect(new URL(ROLE_HOME[role] ?? '/login', req.url));
   }
 
-  // Guard cross-role access
   const allowedPrefix = ROLE_PREFIX[role];
   const crossRole = Object.values(ROLE_PREFIX).some(
     (prefix) => prefix !== allowedPrefix && pathname.startsWith(prefix),
@@ -57,7 +65,4 @@ export function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: ['/((?!_next|favicon.ico|api).*)'],
-};
+*/
