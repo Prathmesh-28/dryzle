@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = ['/login'];
+const PUBLIC_PATHS = ['/', '/login'];
 
 const ROLE_HOME: Record<string, string> = {
   VENDOR: '/vendor/dashboard',
@@ -35,13 +35,13 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get('dryzle_token')?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.next();
   }
 
   const role = decodeRole(token);
-  if (!role) return NextResponse.redirect(new URL('/login', req.url));
+  if (!role) return NextResponse.next();
 
-  // Root → role home
+  // Logged-in user visiting root → go to their dashboard
   if (pathname === '/') {
     return NextResponse.redirect(new URL(ROLE_HOME[role] ?? '/login', req.url));
   }
