@@ -16,6 +16,8 @@
     "strictNullChecks": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "noImplicitReturns": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {

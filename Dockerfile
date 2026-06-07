@@ -37,4 +37,4 @@ COPY backend/prisma ./backend/prisma
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "cd /app/backend && ./node_modules/.bin/prisma migrate deploy && ./node_modules/.bin/ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts && node dist/main"]
+CMD ["sh", "-c", "cd /app/backend && ./node_modules/.bin/prisma db push --accept-data-loss --skip-generate && ./node_modules/.bin/ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts && node dist/main"]

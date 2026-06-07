@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { NotificationType } from '@prisma/client';
+import { NotificationType, Prisma } from '@prisma/client';
 
 interface NotificationPayload {
   title: string;
@@ -25,7 +25,7 @@ export class NotificationsService {
         title: payload.title,
         body: payload.body,
         type: payload.type as NotificationType,
-        metadata: payload.metadata ?? {},
+        metadata: (payload.metadata ?? {}) as Prisma.InputJsonValue,
       },
     });
 
