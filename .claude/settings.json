@@ -53,7 +53,10 @@
       "Bash(curl -s -X POST https://api.vercel.com/v9/projects?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_7PynsMSECfLeHOSJQSJQRuEmeDLvSx463sQztH4JnNAmWIrjSD4PVc24' -H 'Content-Type: application/json' -d '{ *)",
       "Bash(curl -s https://api.vercel.com/v9/projects/dryzle-web?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_19FA2SJvwvwgG68Gx1tTrcopqgZKohWlM0V2VsfookdrOW2D4b0Llzse')",
       "Read(//temp/readonly/**)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(pnpm build *)",
+      "Bash(pnpm prisma *)",
+      "Bash(git restore *)"
     ],
     "additionalDirectories": [
       "/Users/prathmeshwalimbe/Downloads/Dryzle/shared/src",

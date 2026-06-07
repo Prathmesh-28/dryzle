@@ -294,7 +294,7 @@ async function main() {
 
   const orderScenarios = [
     { customer: customer1, vendor: vendor1, svcId: v1Services[0], qty: 3.5, status: OrderStatus.DELIVERED, dbId: db1.id },
-    { customer: customer1, vendor: vendor1, svcId: v1Services[2], qty: 5, status: OrderStatus.IN_PROGRESS ?? OrderStatus.PLACED, dbId: db1.id },
+    { customer: customer1, vendor: vendor1, svcId: v1Services[2], qty: 5, status: OrderStatus.PROCESSING, dbId: db1.id },
     { customer: customer2, vendor: vendor2, svcId: v2Services[0], qty: 4, status: OrderStatus.OUT_FOR_DELIVERY, dbId: db2.id },
     { customer: customer2, vendor: vendor1, svcId: v1Services[3], qty: 2, status: OrderStatus.PLACED, dbId: null },
     { customer: customer1, vendor: vendor2, svcId: v2Services[1], qty: 3, status: OrderStatus.ACCEPTED, dbId: null },
