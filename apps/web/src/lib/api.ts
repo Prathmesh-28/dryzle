@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getToken, clearAuth } from "./auth";
 
-export const API_BASE = "https://dryzle-api.onrender.com/api/v1";
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ?? "https://dryzle-api.onrender.com/api/v1";
 
 export const api = axios.create({
   baseURL: API_BASE,

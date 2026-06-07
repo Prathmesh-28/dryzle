@@ -1,4 +1,4 @@
-export type Role = "CUSTOMER" | "VENDOR" | "DELIVERY_BOY" | "ADMIN";
+export type Role = "CUSTOMER" | "VENDOR" | "DELIVERY_BOY" | "ADMIN" | "SUPER_ADMIN";
 
 const TOKEN_KEY = "dryzle_token";
 const USER_KEY = "dryzle_user";
@@ -71,6 +71,8 @@ export function roleHomePath(role: Role | string | undefined): string {
       return "/delivery/orders";
     case "ADMIN":
       return "/admin/dashboard";
+    case "SUPER_ADMIN":
+      return "/superadmin/dashboard";
     default:
       return "/login";
   }
