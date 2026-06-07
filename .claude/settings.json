@@ -34,7 +34,9 @@
       "Bash(vercel project *)",
       "Bash(vercel login *)",
       "Bash(curl -s -X POST https://api.vercel.com/v13/deployments?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw' -H 'Content-Type: application/json' --data-raw '{\"name\":\"dryzle-web\",\"project\":\"dryzle-web\",\"gitSource\":{\"type\":\"github\",\"repoId\":\"1261738150\",\"ref\":\"main\",\"sha\":\"__CMDSUB_OUTPUT__\"},\"target\":\"production\"}')",
-      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=1' -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw')"
+      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=1' -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw')",
+      "Bash(curl -s 'https://api.vercel.com/v6/deployments?projectId=prj_M1Vrao0HqRpUQBYqQrj5KgFk4BJN&teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=3' -H 'Authorization: Bearer vca_1UBmtYoKJ3CZIP7eqqPu8MrXQVHZ9lQJGrOx20GhYai3ePLwpN3H2tHw')",
+      "Bash(curl -s 'https://api.vercel.com/v2/deployments/dpl_2z3H2UKVAY1Prh8DTr2HwZkzg7he/events?teamId=team_ySXekw9iuly9l1dtsSY9ZUoH&limit=200' -H 'Authorization: Bearer vca_1c3dj7ch0EzQKvaNm8fno72zouCkgAhqffOhOWAx0th5u4WMm93IBufU')"
     ],
     "additionalDirectories": [
       "/Users/prathmeshwalimbe/Downloads/Dryzle/shared/src"

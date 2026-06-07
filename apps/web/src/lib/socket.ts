@@ -21,12 +21,12 @@ export function leaveOrderRoom(orderId: string) {
   getSocket().emit('leave:order', { orderId });
 }
 
-export function onOrderStatus(cb: (data: unknown) => void) {
+export function onOrderStatus(cb: (data: unknown) => void): () => void {
   getSocket().on('order:status', cb);
   return () => getSocket().off('order:status', cb);
 }
 
-export function onLocationUpdate(cb: (data: unknown) => void) {
+export function onLocationUpdate(cb: (data: unknown) => void): () => void {
   getSocket().on('location:update', cb);
   return () => getSocket().off('location:update', cb);
 }
