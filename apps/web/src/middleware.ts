@@ -13,17 +13,19 @@ export const config = {
 const PUBLIC_PATHS = ['/', '/login'];
 
 const ROLE_HOME: Record<string, string> = {
+  CUSTOMER: '/customer',
   VENDOR: '/vendor/dashboard',
   DELIVERY_BOY: '/delivery/orders',
   ADMIN: '/admin/dashboard',
-  CUSTOMER: '/customer',
+  SUPER_ADMIN: '/superadmin/dashboard',
 };
 
 const ROLE_PREFIX: Record<string, string> = {
+  CUSTOMER: '/customer',
   VENDOR: '/vendor',
   DELIVERY_BOY: '/delivery',
   ADMIN: '/admin',
-  CUSTOMER: '/customer',
+  SUPER_ADMIN: '/superadmin',
 };
 
 function decodeRole(token: string): string | null {
@@ -43,18 +45,20 @@ export function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get('dryzle_token')?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
+  if (!token) return NextResponse.redirect(new URL('/login', req.url));
 
   const role = decodeRole(token);
   if (!role) return NextResponse.redirect(new URL('/login', req.url));
 
+  // Root → role home
   if (pathname === '/') {
     return NextResponse.redirect(new URL(ROLE_HOME[role] ?? '/login', req.url));
   }
 
+  // SUPER_ADMIN can access everything
+  if (role === 'SUPER_ADMIN') return NextResponse.next();
+
+  // Guard cross-role access
   const allowedPrefix = ROLE_PREFIX[role];
   const crossRole = Object.values(ROLE_PREFIX).some(
     (prefix) => prefix !== allowedPrefix && pathname.startsWith(prefix),

@@ -38,4 +38,4 @@ COPY --from=builder /app/node_modules/.pnpm /app/node_modules/.pnpm
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "cd /app/backend && npx prisma migrate deploy && node /app/backend/dist/main"]
+CMD ["sh", "-c", "cd /app/backend && npx prisma migrate deploy && npx prisma db seed && node /app/backend/dist/main"]

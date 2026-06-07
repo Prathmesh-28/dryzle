@@ -12,6 +12,7 @@ enum Role {
   VENDOR
   DELIVERY_BOY
   ADMIN
+  SUPER_ADMIN
 }
 
 enum OrderStatus {
@@ -65,10 +66,11 @@ enum NotificationType {
 
 model User {
   id        String   @id @default(cuid())
-  name      String
-  phone     String   @unique
-  email     String?  @unique
-  role      Role     @default(CUSTOMER)
+  name         String
+  phone        String   @unique
+  email        String?  @unique
+  passwordHash String?
+  role         Role     @default(CUSTOMER)
   fcmToken  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
