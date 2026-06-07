@@ -5,7 +5,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
+RUN apk add --no-cache openssl && corepack enable && corepack prepare pnpm@9.15.9 --activate
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.json ./
 COPY shared/package.json ./shared/
